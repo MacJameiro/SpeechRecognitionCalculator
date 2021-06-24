@@ -38,7 +38,7 @@ if __name__ == '__main__':
         stream = listen()
 
         while True:
-            data = np.fromstring(stream.read(CHUNK), dtype=np.int16)
+            data = np.frombuffer(stream.read(CHUNK), dtype=np.int16)
             rms_from_data = rms(data.astype(float))
             BUFF = BUFF[300:]
             BUFF = np.append(BUFF, data)
@@ -60,7 +60,10 @@ if __name__ == '__main__':
                         INIT = True
                         REC = REC.astype(np.int16)
                         zeros = 2 * FS - len(REC)
-                        zeros_arr = np.zeros(zeros)
+                        try:
+                            zeros_arr = np.zeros(zeros)
+                        except:
+                            zeros_arr = []
                         REC_with_zeros = np.append(REC, zeros_arr)
                         REC_with_zeros = REC_with_zeros.astype(np.int16)
                         sf.write(file='word.wav', data=REC_with_zeros, samplerate=FS)
